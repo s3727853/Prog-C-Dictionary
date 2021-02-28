@@ -5,14 +5,12 @@
  * Assignment 3
  *****************************************************************************/
 
-
 #include "score_list.h"
 
 /*Order command line arguments are expected*/
 
 #define SCORELIST 1
 #define DICTIONARY 2
-
 
 #define NUMARGS 3
 
@@ -23,5 +21,5 @@ enum commands {
     CI_SAVE,
     CI_ERROR
 };
-enum commands process_command(char * command, char * return_word);
+enum commands process_command(char* command, char* return_word);
 void print_help(void);

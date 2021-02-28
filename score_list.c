@@ -18,58 +18,55 @@
  **/
 struct score_list *load_scores(const char *filename) {
     FILE *fp;
-    char line[MAXWIDTH+EXTRASPACES];
+    char line[MAXWIDTH + EXTRASPACES];
     BOOLEAN validation = TRUE;
     struct score_list *letters;
-    int * array_pointer = NULL;
+    int *array_pointer = NULL;
     array_pointer = init_validation_list();
 
-    
     /*Allocate memory for score list*/
     letters = calloc(1, sizeof(struct score_list));
-    if(letters == NULL){
+    if (letters == NULL) {
         perror("Score List memory allocation failed.");
         free(letters);
         validation = FALSE;
     }
     letters->total_count = 0;
 
-
     /**
-     * File reading and tokenisation adapted from phonebk_strtok.c from the 
+     * File reading and tokenisation adapted from phonebk_strtok.c from the
      * Week-05 lecture materials by Paul Miller
      **/
 
     fp = fopen(filename, "r");
-    if(fp == NULL){
+    if (fp == NULL) {
         printf("\nError opening score file");
         letters = NULL;
         return letters;
-
     }
-    while(fgets(line, MAXWIDTH+EXTRASPACES, fp) != NULL) {
-        
+    while (fgets(line, MAXWIDTH + EXTRASPACES, fp) != NULL) {
+
         int temp = 0;
         char linecopy[MAXWIDTH + EXTRASPACES];
-        char * token;
+        char *token;
         int current_token = 0;
         struct score score_line;
 
         /*Remove the newline from scorelist line read in*/
-        line[strlen(line)-1]=0;
+        line[strlen(line) - 1] = 0;
 
         /*Line copied for error message if one occurs*/
-        memcpy(linecopy, line, MAXWIDTH+EXTRASPACES);
+        memcpy(linecopy, line, MAXWIDTH + EXTRASPACES);
 
         /*Begin tokenisation*/
 
         token = strtok(line, ",");
-        while(token && validation){
-            switch(current_token){
+        while (token && validation) {
+            switch (current_token) {
                 case 0:
                     /*Hold restult in temp variables for validation*/
                     temp = char_to_int_letter(token, array_pointer);
-                    if(temp<0){
+                    if (temp < 0) {
                         validation = FALSE;
                         break;
                     }
@@ -78,15 +75,15 @@ struct score_list *load_scores(const char *filename) {
                     break;
                 case 1:
                     temp = char_to_int(token);
-                        if(temp<0){
-                            validation = FALSE;
-                            break;
-                        }
-                        score_line.score = temp;
+                    if (temp < 0) {
+                        validation = FALSE;
+                        break;
+                    }
+                    score_line.score = temp;
                     break;
                 case 2:
                     temp = char_to_int(token);
-                    if(temp<0){
+                    if (temp < 0) {
                         validation = FALSE;
                         break;
                     }
@@ -94,11 +91,10 @@ struct score_list *load_scores(const char *filename) {
                     break;
                 default:
                     /*To many tokens (issue with score file formating)*/
-                    fprintf(stderr, "Problem with line in score file: %s\n", 
+                    fprintf(stderr, "Problem with line in score file: %s\n",
                             linecopy);
                     validation = FALSE;
                     break;
-                    
             }
 
             /*Continue with next token*/
@@ -107,14 +103,13 @@ struct score_list *load_scores(const char *filename) {
         }
 
         /*Insert the score struct into the score_list struct */
-            
-            if(!scorelist_add_item(letters, score_line)){
-                validation = FALSE;
-             }
 
+        if (!scorelist_add_item(letters, score_line)) {
+            validation = FALSE;
+        }
     }
 
-    if(!validation){
+    if (!validation) {
         printf("\nQuiting due to an error reading in score list...\n");
         free(letters);
         fclose(fp);
@@ -127,16 +122,16 @@ struct score_list *load_scores(const char *filename) {
 
 /*Char to integer function to convert values read in for scorelist*/
 
-int char_to_int(char *string){
+int char_to_int(char *string) {
     int result = 0;
     char *endptr;
     result = strtol(string, &endptr, 10);
     /*if conversion not successfull return -1*/
-    if(*endptr != '\0'){
+    if (*endptr != '\0') {
         return -1;
     }
     /*Check valid int range*/
-    if(result > INT_MAX || result < INT_MIN){
+    if (result > INT_MAX || result < INT_MIN) {
         return -1;
     }
     return result;
@@ -145,18 +140,18 @@ int char_to_int(char *string){
 /* This function converts letter to integer, checks that it is in ragne
  * and that it is the first occurance */
 
-int char_to_int_letter(char *string, int *array_pointer){
+int char_to_int_letter(char *string, int *array_pointer) {
     int letter = 0;
     int count = 0;
     letter = *string;
     /*Check letter is in valid range defined in score_list.h*/
-    if(letter < START_LETTER_VALUE || letter > END_LETTER_VALUE){
+    if (letter < START_LETTER_VALUE || letter > END_LETTER_VALUE) {
         return -1;
     }
- 
+
     /*Check letter has not allready been read in*/
-    while(count< NUM_SCORES){
-        if(array_pointer[count] == letter){
+    while (count < NUM_SCORES) {
+        if (array_pointer[count] == letter) {
             array_pointer[count] = 0;
             return letter;
         }
@@ -168,10 +163,10 @@ int char_to_int_letter(char *string, int *array_pointer){
 
 /* This function adds a score struct (letter) to the score_list */
 
-BOOLEAN scorelist_add_item(struct score_list *letters, struct score item){
+BOOLEAN scorelist_add_item(struct score_list *letters, struct score item) {
 
     /*Check not at maxiumum letters*/
-    if(letters->num_scores == NUM_SCORES){
+    if (letters->num_scores == NUM_SCORES) {
         return FALSE;
     }
     /*Insert letter at end of letters list (score_list)*/
@@ -181,22 +176,18 @@ BOOLEAN scorelist_add_item(struct score_list *letters, struct score item){
     return TRUE;
 }
 
-
 /* Simple array that holds all values for valid alphabet. used in validation
  * later on*/
 
-int * init_validation_list(){
+int *init_validation_list() {
     static int letter_array[NUM_SCORES];
     int letter = START_LETTER_VALUE;
     int count = 0;
 
-    while(letter <= END_LETTER_VALUE){
+    while (letter <= END_LETTER_VALUE) {
         letter_array[count] = letter;
         letter++;
         count++;
     }
- return letter_array;
-    
+    return letter_array;
 }
-
-

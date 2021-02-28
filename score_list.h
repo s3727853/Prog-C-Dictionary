@@ -21,7 +21,7 @@ struct score {
 #define NUM_SCORES 26
 
 /* 65 - 90 For A-Z (Uppercase). 97 - 122 for a-z (lowercase) */
-#define START_LETTER_VALUE 65 
+#define START_LETTER_VALUE 65
 #define END_LETTER_VALUE 90
 
 #define LETTER_LENGTH 1
@@ -40,10 +40,9 @@ struct score_list {
 
 int random_letter_index(struct score_list *scorelist);
 int char_to_int(char *ptr);
-int char_to_int_letter(char * ptr, int * array_ptr);
-int * init_validation_list();
+int char_to_int_letter(char *ptr, int *array_ptr);
+int *init_validation_list();
 BOOLEAN scorelist_add_item(struct score_list *ptr, struct score item);
 
 struct score_list *load_scores(const char *);
 void deal_letters(struct score_list *, struct score_list *);
-
